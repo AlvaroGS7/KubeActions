@@ -1,0 +1,14 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: saccalvaro-binding
+  namespace: testalvaro
+subjects:
+- kind: ServiceAccount
+  name: saccalvaro
+  namespace: testalvaro
+roleRef:
+  kind: Role
+  name: saccalvaro-role
+  apiGroup: rbac.authorization.k8s.io
+
