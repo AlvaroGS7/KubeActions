@@ -1,0 +1,60 @@
+name: Terraform Full VM Deployment
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+    permissions:
+      id-token: write
+      
+    # AZ CLI install.
+    steps:
+
+    # Checkout
+    - name: Checkout
+      uses: actions/checkout@v3.5.3
+      
+    - name: Replace tokens
+      uses: cschleiden/replace-tokens@v1.2
+      with:
+        tokenPrefix: '__'
+        tokenSuffix: '__'
+        files: '["**/*"]'
+      env:
+        token: ${{ secrets.TOKEN }}
+        certdata: ${{ secrets.CERTDATA }}
+
+    ## BELOW THIS LINE, EVERYTHING IS NOT TESTED YET ##
+#     - name: Deploy to Kubernetes cluster
+#       uses: Azure/k8s-deploy@v4.9
+#       with:
+#         # Choose the target Kubernetes namespace. If the namespace is not provided, the commands will run in the default namespace.
+#         namespace: # optional, default is default
+#         # Path to the manifest files which will be used for deployment.
+#         manifests: 
+#         # Fully qualified resource URL of the image(s) to be used for substitutions on the manifest files Example: contosodemo.azurecr.io/helloworld:test
+#         images: # optional
+#         # Name of a docker-registry secret that has already been set up within the cluster. Each of these secret names are added under imagePullSecrets field for the workloads found in the input manifest files
+#         imagepullsecrets: # optional
+#         # Switch whether to pull the images from the registry before deployment to find out Dockerfile's path in order to add it to the annotations
+#         pull-images: # optional, default is true
+#         # deploy, promote, or reject
+#         action: # default is deploy
+#         # Github token
+#         token: # default is ${{ github.token }}
+#         # True if the insecure-skip-tls-verify option should be used. Input should be 'true' or 'false'.
+#         skip-tls-verify: # optional
